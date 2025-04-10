@@ -149,6 +149,41 @@ def analyze_stock(symbol: str, last_years_profit: str = "", company_info: str = 
         logger.error(f"주식 분석 중 오류 발생 {symbol}: {e}")
         return f"{symbol}의 주식 분석에 실패했습니다."
 
+
+@mcp.tool("get_stock_history")
+def get_stock_history(symbol: str, period: str = "1mo") -> str:
+    try:
+        stock_data = yf.Ticker(symbol)
+        hist = stock_data.history(period=period)
+
+        if hist.empty:
+            return f"{symbol}의 과거 주가 데이터를 찾을 수 없습니다."
+
+        prices = hist['Close'].tail(5).round(2)
+        price_info = "\n".join([f"{date.date()}: ${price}" for date, price in prices.items()])
+        return f"[{symbol}] 최근 {period}의 주가 추이:\n{price_info}"
+    except Exception as e:
+        logger.error(f"Error fetching stock history for {symbol}: {e}")
+        return f"{symbol}의 주가 히스토리 조회에 실패했습니다."
+
+@mcp.tool("get_stock_indicators")
+def get_stock_indicators(symbol: str) -> str:
+    try:
+        info = yf.Ticker(symbol).info
+        pe = info.get("trailingPE", "N/A")
+        pb = info.get("priceToBook", "N/A")
+        eps = info.get("trailingEps", "N/A")
+
+        return f"""
+[{symbol}] 주요 지표:
+- PER: {pe}
+- PBR: {pb}
+- EPS: {eps}
+"""
+    except Exception as e:
+        logger.error(f"Error fetching indicators for {symbol}: {e}")
+        return f"{symbol}의 지표 조회에 실패했습니다."
+
 # ✅ MCP 서버 실행
 if __name__ == "__main__":
     logger.info(" MCP server start")
