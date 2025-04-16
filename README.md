@@ -1,8 +1,9 @@
-# MCP
+# MCP: StocksMCPServer
+This project configures the MCP server to view company information and stock prices using Claude.
 
-Configure the MCP server to view company information and stock prices using the Claude<br><br>
+## Configuration
 
-claude_desktop_config.json<br>
+The MCP server is defined in claude_desktop_config.json as follows:
 ```json
 {
   "mcpServers": {
@@ -21,3 +22,12 @@ claude_desktop_config.json<br>
     }
   }
 }
+```
+Make sure to update the "directory" field to match your project path if it’s different.
+
+## Development Mode
+You can also try it out interactively using MCP Inspector:
+
+```bash
+mcp dev main.py
+```
